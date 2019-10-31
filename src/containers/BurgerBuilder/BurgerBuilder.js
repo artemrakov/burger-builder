@@ -12,11 +12,26 @@ class BurgerBuilder extends React.Component {
     }
   }
 
+  addTypeHandler = (type) => (e) => {
+    e.preventDefault();
+    const updatedIngredients  = { ...this.state.ingredients, [type]: this.state.ingredients[type] + 1 };
+    this.setState({ ingredients: updatedIngredients });
+  }
+
+
+  removeTypeHandler = (type) => (e) => {
+    e.preventDefault();
+    if (this.state.ingredients[type] > 0) {
+      const updatedIngredients  = { ...this.state.ingredients, [type]: this.state.ingredients[type] - 1 }
+      this.setState({ ingredients: updatedIngredients });
+    }
+  }
+
   render() {
     return (
       <>
         <Burger ingredients={this.state.ingredients} />
-        <BuildControls />
+        <BuildControls add={this.addTypeHandler} remove={this.removeTypeHandler} />
       </>
     )
   }
