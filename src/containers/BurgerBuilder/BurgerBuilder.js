@@ -3,6 +3,7 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from '../../axios-orders.js';
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -32,8 +33,24 @@ class BurgerBuilder extends React.Component {
     this.setState({ purchasing: false });
   }
 
-  purchaseContinueHandler = () => {
-    alert('You continue!');
+  purchaseContinueHandler = async () => {
+    const order = {
+      ingredients: this.state.ingredients,
+      price: this.state.totalPrice,
+      customer: {
+        name: 'Artem Rakov',
+        address: {
+          street: 'Test',
+          zipCode: '312123',
+          country: 'Canada'
+        },
+        email: 'test@test.com'
+      },
+      deliveryMethod: 'fastest'
+    };
+
+    const response = await axios.post('/orders.json', order);
+    console.log(response)
   }
 
   updatePurchaseState = (updatedIngredients) => {
