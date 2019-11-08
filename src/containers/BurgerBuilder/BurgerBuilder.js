@@ -16,16 +16,20 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends React.Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0
-    },
+    ingredients: null,
     totalPrice: 4,
     puchasable: false,
     purchasing: false,
     loading: false
+  }
+
+  async componentDidMount() {
+    this.setState({ loading: true });
+    const response = await axios.get('https://burder-builder-82f40.firebaseio.com/ingredients.json');
+
+    if (response) {
+      this.setState({ ingredients: response.data, loading: false });
+    }
   }
 
   purchaseHandler = () => {
@@ -86,36 +90,51 @@ class BurgerBuilder extends React.Component {
 
   orderSummary() {
     const loading = this.state.loading;
+    const ingredients = this.state.ingredients;
 
-    if (loading) {
-      return <Spinner />
-    } else {
+    if (ingredients && !loading) {
       return <OrderSummary
-               ingredients={this.state.ingredients}
+               ingredients={ingredients}
                purchaseCancelled={this.purchaseCancelHandler}
                purchaseContinue={this.purchaseContinueHandler}
                price={this.state.totalPrice} />
+
+    } else {
+      return <Spinner />
+    }
+  }
+
+  burgerAndBuildControls() {
+    const ingredients = this.state.ingredients;
+
+    if (ingredients) {
+      const disabledInfo = Object.keys(ingredients)
+                                 .reduce((acc, type) => ({ ...acc, [type]: ingredients[type] <= 0 }), {})
+      return (
+        <>
+          <Burger ingredients={this.state.ingredients} />
+          <BuildControls
+            price={this.state.totalPrice}
+            disabled={disabledInfo}
+            ingredientAdded={this.addIngredientHandler}
+            ingredientRemoved={this.removeIngredientHandler}
+            purchasable={this.state.purchasable}
+            ordered={this.purchaseHandler}
+            />
+        </>
+      );
+    } else {
+      return <Spinner />
     }
   }
 
   render() {
-    const disabledInfo = Object.keys(this.state.ingredients)
-                               .reduce((acc, type) => ({ ...acc, [type]: this.state.ingredients[type] <= 0 }), {})
-
     return (
       <>
         <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
           {this.orderSummary()}
         </Modal>
-        <Burger ingredients={this.state.ingredients} />
-        <BuildControls
-          price={this.state.totalPrice}
-          disabled={disabledInfo}
-          ingredientAdded={this.addIngredientHandler}
-          ingredientRemoved={this.removeIngredientHandler}
-          purchasable={this.state.purchasable}
-          ordered={this.purchaseHandler}
-          />
+        {this.burgerAndBuildControls()}
       </>
     )
   }
