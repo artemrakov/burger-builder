@@ -34,6 +34,8 @@ class ContactData extends React.Component {
       deliveryMethod: 'fastest'
     };
 
+    console.log(order)
+
     const response = await axios.post('/orders.json', order);
     console.log(response);
     this.setState({ loading: false });

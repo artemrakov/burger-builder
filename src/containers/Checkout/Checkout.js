@@ -35,7 +35,7 @@ class Checkout extends React.Component {
           ingredients={this.state.ingredients} />
         <Route
           path={this.props.match.path + '/contact-data'}
-          render={() => (<ContactData ingredients={this.props.ingredients} />)} />
+          render={() => (<ContactData ingredients={this.state.ingredients} />)} />
       </div>
     );
   }
