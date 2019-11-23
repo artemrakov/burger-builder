@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import axios from '../../../axios-orders';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
@@ -134,13 +133,13 @@ class ContactData extends React.Component {
   };
 
   form = () => {
-    const loading = this.props.loading;
+    const request = this.props.request;
 
-    if (loading == 'requested') {
+    if (request === 'requested') {
       return <Spinner />
     }
 
-    if (loading == 'failed') {
+    if (request === 'failed') {
       return (
         <span>Please, reload the page!</span>
       );

@@ -1,4 +1,4 @@
-import { createAction } from 'redux-action';
+import { createAction } from 'redux-actions';
 import axios from '../../axios-orders';
 
 export const addIngredient = createAction('INGREDIENT_ADD');
