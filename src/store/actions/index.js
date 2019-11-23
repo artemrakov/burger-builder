@@ -1,4 +1,7 @@
-import { createAction } from 'redux-actions';
+export {
+  addIngredient,
+  removeIngredient,
+  setIngredients
+} from './burgerBuilder';
 
-export const addIngredient = createAction('INGREDIENT_ADD');
-export const removeIngredient = createAction('INGREDIENT_REMOVE');
+export { } from './order';

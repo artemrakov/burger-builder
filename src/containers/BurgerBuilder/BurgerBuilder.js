@@ -9,18 +9,6 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders.js';
 
-const mapStateToProps = (state) => {
-  return {
-    ingredients: state.ingredients,
-    totalPrice: state.totalPrice
-  }
-};
-
-const actionsCreators = {
-  addIngredient: actions.addIngredient,
-  removeIngredient: actions.removeIngredient
-};
-
 class BurgerBuilder extends React.Component {
   state = {
     puchasable: false,
@@ -29,12 +17,7 @@ class BurgerBuilder extends React.Component {
   }
 
   async componentDidMount() {
-    // this.setState({ loading: true });
-    // const response = await axios.get('https://burder-builder-82f40.firebaseio.com/ingredients.json');
-    //
-    // if (response) {
-    //   this.setState({ ingredients: response.data, loading: false });
-    // }
+    this.props.setIngredients();
   }
 
   purchaseHandler = () => {
@@ -123,5 +106,18 @@ class BurgerBuilder extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    totalPrice: state.totalPrice,
+  }
+};
+
+const actionsCreators = {
+  addIngredient: actions.addIngredient,
+  removeIngredient: actions.removeIngredient,
+  setIngredients: actions.setIngredients
+};
 
 export default connect(mapStateToProps, actionsCreators)(withErrorHandler(BurgerBuilder, axios));

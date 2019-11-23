@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import * as actions from '../actions';
+import * as actions from '../actions/burgerBuilder';
 import { combineReducers } from 'redux';
 
 const INGREDIENT_PRICES = {
@@ -9,21 +9,22 @@ const INGREDIENT_PRICES = {
   bacon: 0.7
 };
 
-const initialIngredients = {
-  salad: 0,
-  cheese: 0,
-  meat: 0,
-  bacon: 0
-};
-
 const ingredients = handleActions({
   [actions.addIngredient](state, { payload: { ingredient } }) {
     return { ...state, [ingredient]: state[ingredient] + 1 };
   },
   [actions.removeIngredient](state, { payload: { ingredient } }) {
     return { ...state, [ingredient]: state[ingredient] - 1 };
+  },
+  [actions.setIngredientsSuccess](state, { payload: { ingredients } }) {
+    return {
+      salad: ingredients.salad,
+      bacon: ingredients.bacon,
+      cheese: ingredients.cheese,
+      meat: ingredients.meat
+    };
   }
-}, initialIngredients);
+}, {});
 
 const totalPrice = handleActions({
   [actions.addIngredient](state, { payload: { ingredient } }) {
@@ -34,7 +35,17 @@ const totalPrice = handleActions({
   }
 }, 4)
 
+const error = handleActions({
+  [actions.setIngredientsSuccess](state) {
+    return false;
+  },
+  [actions.setIngredientsFailed](state) {
+    return true;
+  }
+}, false)
+
 export default combineReducers({
   ingredients,
-  totalPrice
+  totalPrice,
+  error
 });
