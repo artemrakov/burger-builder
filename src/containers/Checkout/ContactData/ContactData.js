@@ -6,13 +6,7 @@ import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import classes from './ContactData.module.css';
-
-const mapStateToProps = (state) => {
-  return {
-    ingredients: state.ingredients,
-    totalPrice: state.totalPrice
-  }
-};
+import * as actions from '../../../store/actions';
 
 class ContactData extends React.Component {
   state = {
@@ -85,7 +79,6 @@ class ContactData extends React.Component {
       }
     },
     formIsValid: false,
-    loading: false
   }
 
   checkValidity(value, rules) {
@@ -108,8 +101,6 @@ class ContactData extends React.Component {
 
   orderHandler = async (e) => {
     e.preventDefault();
-    this.setState({ loading: true });
-
     const formData = Object.keys(this.state.orderForm).reduce((acc, key) => {
       return { ...acc, [key]: this.state.orderForm[key].value }
     }, {});
@@ -120,9 +111,7 @@ class ContactData extends React.Component {
       orderData: formData
     };
 
-    const response = await axios.post('/orders.json', order);
-    console.log(response);
-    this.setState({ loading: false });
+    this.props.purchaseBurger(order);
     this.props.history.push('/');
   }
 
@@ -145,33 +134,39 @@ class ContactData extends React.Component {
   };
 
   form = () => {
-    const loading = this.state.loading;
+    const loading = this.props.loading;
 
-    if (loading) {
+    if (loading == 'requested') {
       return <Spinner />
-    } else {
-      const formElements = Object.keys(this.state.orderForm).map((key) => {
-        const formElement = this.state.orderForm[key];
-        return (
-          <Input
-            key={key}
-            changed={this.inputChangedHandler(key)}
-            elementType={formElement.elementType}
-            elementConfig={formElement.elementConfig}
-            value={formElement.value}
-            touched={formElement.touched}
-            shouldValidate={formElement.validation}
-            invalid={!formElement.valid} />
-        );
-      });
+    }
 
+    if (loading == 'failed') {
       return (
-        <form onSubmit={this.orderHandler}>
-          {formElements}
-          <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
-        </form>
+        <span>Please, reload the page!</span>
       );
     }
+
+    const formElements = Object.keys(this.state.orderForm).map((key) => {
+      const formElement = this.state.orderForm[key];
+      return (
+        <Input
+          key={key}
+          changed={this.inputChangedHandler(key)}
+          elementType={formElement.elementType}
+          elementConfig={formElement.elementConfig}
+          value={formElement.value}
+          touched={formElement.touched}
+          shouldValidate={formElement.validation}
+          invalid={!formElement.valid} />
+      );
+    });
+
+    return (
+      <form onSubmit={this.orderHandler}>
+        {formElements}
+        <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
+      </form>
+    );
   }
 
   render() {
@@ -184,4 +179,15 @@ class ContactData extends React.Component {
   }
 };
 
-export default connect(mapStateToProps)(withRouter(ContactData));
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    totalPrice: state.totalPrice
+  }
+};
+
+const mapDispatchToProps = {
+  purchaseBurger: actions.purchaseBurger
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ContactData));
