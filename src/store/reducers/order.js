@@ -27,9 +27,8 @@ const fetchOrdersRequest  = handleActions({
 }, 'none');
 
 const orders = handleActions({
-  [actions.purchaseBurgerSuccess](state, { payload: { id, order } }) {
-    const newOrder = { id, ...order };
-    return [ newOrder, ...state ];
+  [actions.purchaseBurgerSuccess](state, { payload: { order } }) {
+    return [ order, ...state ];
   },
   [actions.fetchOrdersSuccess](state, { payload: { orders } }) {
     return orders;

@@ -9,7 +9,8 @@ export const purchaseBurger = (order) => async (dispatch) => {
   dispatch(purchaseBurgerRequest());
   try {
     const response = await axios.post('/orders.json', order);
-    dispatch(purchaseBurgerSuccess({ id: response.data.name, order }));
+    const newOrder = { id: response.data.name, ...order };
+    dispatch(purchaseBurgerSuccess({ order: newOrder }));
   } catch (e) {
     dispatch(purchaseBurgerFailed({ error: e }));
   }
