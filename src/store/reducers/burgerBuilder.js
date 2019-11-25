@@ -32,6 +32,9 @@ const totalPrice = handleActions({
   },
   [actions.removeIngredient](state, { payload: { ingredient } }) {
     return state - INGREDIENT_PRICES[ingredient];
+  },
+  [actions.setIngredientsSuccess]() {
+    return 4;
   }
 }, 4)
 

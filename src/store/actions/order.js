@@ -9,8 +9,25 @@ export const purchaseBurger = (order) => async (dispatch) => {
   dispatch(purchaseBurgerRequest());
   try {
     const response = await axios.post('/orders.json', order);
-    dispatch(purchaseBurgerSuccess({ id: response.data, order }));
+    dispatch(purchaseBurgerSuccess({ id: response.data.name, order }));
   } catch (e) {
     dispatch(purchaseBurgerFailed({ error: e }));
+  }
+};
+
+export const fetchOrdersSuccess = createAction('FETCH_ORDERS_SUCCESS');
+export const fetchOrdersFailed = createAction('FETCH_ORDERS_FAILED');
+export const fetchOrdersRequest = createAction('FETCH_ORDERS_REQUEST');
+
+export const fetchOrders = () => async (dispatch) => {
+  dispatch(fetchOrdersRequest());
+  try {
+    const response = await axios.get('/orders.json');
+    const orders = Object.keys(response.data).map((key) => {
+      return { id: key, ...response.data[key] }
+    });
+    dispatch(fetchOrdersSuccess({ orders }));
+  } catch {
+    dispatch(fetchOrdersFailed());
   }
 };

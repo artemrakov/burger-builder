@@ -5,7 +5,7 @@ import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSumm
 import ContactData from './ContactData/ContactData';
 
 const mapStateToProps = (state) => {
-  return { ingredients: state.ingredients }
+  return { ingredients: state.burgerBuilder.ingredients }
 }
 
 class Checkout extends React.Component {

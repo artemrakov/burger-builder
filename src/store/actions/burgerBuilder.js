@@ -14,3 +14,4 @@ export const setIngredients = () => async (dispatch) => {
     dispatch(setIngredientsFailed());
   }
 };
+
