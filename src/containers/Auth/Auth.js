@@ -1,6 +1,7 @@
 import React from 'react';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.module.css';
 import * as actions from '../../store/actions';
 import { connect } from 'react-redux';
@@ -37,7 +38,7 @@ class Auth extends React.Component {
         touched: false
       }
     },
-    isSignUp: true
+    isSignup: true
   }
 
   checkValidity(value, rules) {
@@ -63,13 +64,19 @@ class Auth extends React.Component {
     return isValid;
   }
 
+  switchAuthModeHandler = () => {
+    this.setState(prevState => {
+      return { isSignup: !prevState.isSignup };
+    })
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
     const { auth } = this.props;
     const email = this.state.controls.email.value;
     const password = this.state.controls.password.value;
 
-    auth(email, password);
+    auth(email, password, this.state.isSignup);
   };
 
   inputChangedHandler = (id) => (event) => {
@@ -84,6 +91,12 @@ class Auth extends React.Component {
   };
 
   form = () => {
+    const { request, error } = this.props;
+
+    if (request === 'requested') {
+      return <Spinner />
+    }
+
     const formElements = Object.keys(this.state.controls).map((key) => {
       const formElement = this.state.controls[key];
       return (
@@ -100,10 +113,18 @@ class Auth extends React.Component {
     });
 
     return (
-      <form onSubmit={this.submitHandler}>
-        {formElements}
-        <Button btnType="Success">SUBMIT</Button>
-      </form>
+      <>
+        { error && <p>{ error.message }</p> }
+        <form onSubmit={this.submitHandler}>
+          {formElements}
+          <Button btnType="Success">SUBMIT</Button>
+        </form>
+        <Button
+          clicked={this.switchAuthModeHandler}
+          btnType="Danger">
+          SWITCH TO {this.state.isSignup ? 'SIGNIN' : 'SIGNUP' }
+        </Button>
+      </>
     );
   }
 
@@ -111,7 +132,6 @@ class Auth extends React.Component {
     return (
       <div className={classes.Auth}>
         {this.form()}
-        <Button btnType="Danger">SWITCH TO SIGNIN</Button>
       </div>
     );
   }
@@ -121,4 +141,11 @@ const mapActionsToProps = {
   auth: actions.auth
 };
 
-export default connect(null, mapActionsToProps)(Auth);
+const mapStateToProps = (state) => {
+  return {
+    request: state.auth.request,
+    error: state.auth.error
+  };
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Auth);
