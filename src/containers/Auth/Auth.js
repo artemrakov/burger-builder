@@ -34,7 +34,8 @@ class Auth extends React.Component {
         valid: false,
         touched: false
       }
-    }
+    },
+    isSignUp: true
   }
 
   checkValidity(value, rules) {
@@ -99,6 +100,7 @@ class Auth extends React.Component {
     return (
       <div className={classes.Auth}>
         {this.form()}
+        <Button btnType="Danger">SWITCH TO SIGNIN</Button>
       </div>
     );
   }
