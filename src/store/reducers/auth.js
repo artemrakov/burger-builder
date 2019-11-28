@@ -2,6 +2,11 @@ import * as actions from '../actions/auth';
 import { handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 
+const redirectPath = handleActions({
+  [actions.authRedirect](state, { payload: { path } }) {
+    return path;
+  }
+}, '/');
 
 const token = handleActions({
   [actions.authSuccess](state, { payload: { token } }) {
@@ -47,5 +52,6 @@ export default combineReducers({
   request,
   error,
   token,
-  userId
+  userId,
+  redirectPath
 })

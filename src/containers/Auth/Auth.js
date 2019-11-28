@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
@@ -39,6 +40,14 @@ class Auth extends React.Component {
       }
     },
     isSignup: true
+  }
+
+  componentDidMount() {
+    const { buildingBurger, redirectPath, setAuthRedirect } = this.props;
+
+    if (!buildingBurger && redirectPath !== '/') {
+      setAuthRedirect({ path: '/' });
+    }
   }
 
   checkValidity(value, rules) {
@@ -131,6 +140,7 @@ class Auth extends React.Component {
   render() {
     return (
       <div className={classes.Auth}>
+        {this.props.isAuth && <Redirect to={this.props.redirectPath} />}
         {this.form()}
       </div>
     );
@@ -138,13 +148,17 @@ class Auth extends React.Component {
 }
 
 const mapActionsToProps = {
-  auth: actions.auth
+  auth: actions.auth,
+  setAuthRedirect: actions.authRedirect
 };
 
 const mapStateToProps = (state) => {
   return {
     request: state.auth.request,
-    error: state.auth.error
+    error: state.auth.error,
+    isAuth: state.auth.token !== null,
+    redirectPath: state.auth.redirectPath,
+    buildingBurger: state.burgerBuilder.building
   };
 }
 

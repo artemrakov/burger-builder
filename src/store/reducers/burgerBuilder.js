@@ -38,6 +38,18 @@ const totalPrice = handleActions({
   }
 }, 4)
 
+const building = handleActions({
+  [actions.addIngredient]() {
+    return true;
+  },
+  [actions.removeIngredient]() {
+    return true;
+  },
+  [actions.setIngredientsSuccess]() {
+    return false;
+  }
+}, false);
+
 const error = handleActions({
   [actions.setIngredientsSuccess](state) {
     return false;
@@ -50,5 +62,6 @@ const error = handleActions({
 export default combineReducers({
   ingredients,
   totalPrice,
+  building,
   error
 });

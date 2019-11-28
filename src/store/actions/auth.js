@@ -5,6 +5,7 @@ export const authRequest = createAction('AUTH_REQUEST');
 export const authSuccess = createAction('AUTH_SUCCESS');
 export const authFailed = createAction('AUTH_FAILED');
 export const authLogout = createAction('AUTH_LOGOUT');
+export const authRedirect = createAction('AUTH_REDIRECT');
 
 export const auth = (email, password, isSignup) => async (dispatch) => {
   dispatch(authRequest());

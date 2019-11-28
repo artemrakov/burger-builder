@@ -21,7 +21,12 @@ class BurgerBuilder extends React.Component {
   }
 
   purchaseHandler = () => {
-    this.setState({ purchasing: true });
+    if (this.props.isAuth) {
+      this.setState({ purchasing: true });
+    } else {
+      this.props.setAuthRedirect({ path: '/checkout' });
+      this.props.history.push('/auth');
+    }
   }
 
   purchaseCancelHandler = () => {
@@ -87,6 +92,7 @@ class BurgerBuilder extends React.Component {
             ingredientRemoved={this.removeIngredientHandler}
             purchasable={this.state.purchasable}
             ordered={this.purchaseHandler}
+            isAuth={this.props.isAuth}
             />
         </>
       );
@@ -111,13 +117,15 @@ const mapStateToProps = (state) => {
   return {
     ingredients: state.burgerBuilder.ingredients,
     totalPrice: state.burgerBuilder.totalPrice,
+    isAuth: state.auth.token !== null
   }
 };
 
 const actionsCreators = {
   addIngredient: actions.addIngredient,
   removeIngredient: actions.removeIngredient,
-  setIngredients: actions.setIngredients
+  setIngredients: actions.setIngredients,
+  setAuthRedirect: actions.authRedirect
 };
 
 export default connect(mapStateToProps, actionsCreators)(withErrorHandler(BurgerBuilder, axios));
