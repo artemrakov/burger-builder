@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Route } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import * as actions from './store/actions';
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
@@ -20,19 +20,21 @@ class App extends React.Component {
 
     if (isAuth) {
       return (
-        <>
+        <Switch>
           <Route path="/checkout" component={Checkout} />
           <Route path="/orders" component={Orders} />
-          <Route path="/" exact component={BurgerBuilder} />
           <Route path="/logout" component={Logout} />
-        </>
+          <Route path="/" exact component={BurgerBuilder} />
+          <Redirect to='/' />
+        </Switch>
       );
     } else {
       return (
-        <>
-          <Route path="/" exact component={BurgerBuilder} />
+        <Switch>
           <Route path="/auth" component={Auth} />
-        </>
+          <Route path="/" exact component={BurgerBuilder} />
+          <Redirect to='/' />
+        </Switch>
       )
     }
   };

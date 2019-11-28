@@ -20,10 +20,11 @@ export const fetchOrdersSuccess = createAction('FETCH_ORDERS_SUCCESS');
 export const fetchOrdersFailed = createAction('FETCH_ORDERS_FAILED');
 export const fetchOrdersRequest = createAction('FETCH_ORDERS_REQUEST');
 
-export const fetchOrders = (token) => async (dispatch) => {
+export const fetchOrders = ({ token, userId }) => async (dispatch) => {
   dispatch(fetchOrdersRequest());
   try {
-    const response = await axios.get('/orders.json?auth=' + token);
+    const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+    const response = await axios.get('/orders.json' + queryParams);
     const orders = Object.keys(response.data).map((key) => {
       return { id: key, ...response.data[key] }
     });
