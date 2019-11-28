@@ -15,25 +15,49 @@ class App extends React.Component {
     this.props.autoSignup();
   }
 
+  routes = () => {
+    const { isAuth } = this.props;
+
+    if (isAuth) {
+      return (
+        <>
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/orders" component={Orders} />
+          <Route path="/" exact component={BurgerBuilder} />
+          <Route path="/logout" component={Logout} />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Route path="/" exact component={BurgerBuilder} />
+          <Route path="/auth" component={Auth} />
+        </>
+      )
+    }
+  };
+
   render() {
     return (
       <div>
         <Layout>
-          <Route path="/" exact component={BurgerBuilder} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/orders" component={Orders} />
-          <Route path="/logout" component={Logout} />
-          <Route path="/auth" component={Auth} />
+          {this.routes()}
         </Layout>
       </div>
     );
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    isAuth: state.auth.token !== null
+  }
+};
+
 const mapActionsToProps = {
   autoSignup: actions.authCheckState
-}
+};
 
 
 
-export default connect(null, mapActionsToProps)(App);
+export default connect(mapStateToProps, mapActionsToProps)(App);
