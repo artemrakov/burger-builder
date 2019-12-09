@@ -22,4 +22,11 @@ describe('NavigationItems', () => {
 
     expect(wrapper.find(NavigationItem)).toHaveLength(3);
   });
+
+  it('should contain NavigationItem which logouts', () => {
+    wrapper.setProps({ isAuth: true });
+    const logout = <NavigationItem link='/logout'>Logout</NavigationItem>;
+
+    expect(wrapper.contains(logout)).toEqual(true);
+  });
 });
