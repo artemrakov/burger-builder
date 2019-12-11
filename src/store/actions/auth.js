@@ -18,11 +18,10 @@ export const auth = (email, password, isSignup) => async (dispatch) => {
     password: password,
     returnSecureToken: true
   };
-  const apiKey = 'AIzaSyBZFq3wKW5JGnTxwJJaacof3y7DqT7ORTI';
 
   try {
     const url = isSignup ? 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' : 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
-    const response = await axios.post(url + apiKey, authData);
+    const response = await axios.post(url + process.env.FIREBASE_API, authData);
     const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
     localStorage.setItem('token', response.data.idToken);
     localStorage.setItem('expirationDate', expirationDate);
