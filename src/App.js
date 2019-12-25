@@ -1,47 +1,46 @@
-import React from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import * as actions from './store/actions';
-import asyncComponent from './hoc/asyncComponent/asyncComponent';
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 
-const asyncCheckout = asyncComponent(() => {
+const Checkout = React.lazy(() => {
   return import('./containers/Checkout/Checkout');
 });
 
-const asyncOrders = asyncComponent(() => {
+const Orders = React.lazy(() => {
   return import('./containers/Orders/Orders');
 });
 
-const asyncAuth = asyncComponent(() => {
+const Auth = React.lazy(() => {
   return import('./containers/Auth/Auth');
 });
 
-class App extends React.Component {
-  componentDidMount() {
-    this.props.autoSignup();
-  }
+const App = props => {
+  useEffect(() => {
+    props.autoSignup();
+  }, []);
 
-  routes = () => {
-    const { isAuth } = this.props;
+  const routes = () => {
+    const { isAuth } = props;
 
     if (isAuth) {
       return (
         <Switch>
-          <Route path="/checkout" component={asyncCheckout} />
-          <Route path="/orders" component={asyncOrders} />
+          <Route path="/checkout" render={() => <Checkout />} />
+          <Route path="/orders" render={() => <Orders />} />
           <Route path="/logout" component={Logout} />
           <Route path="/" exact component={BurgerBuilder} />
-          <Route path="/auth" component={asyncAuth} />
+          <Route path="/auth" render={() => <Auth />} />
           <Redirect to='/' />
         </Switch>
       );
     } else {
       return (
         <Switch>
-          <Route path="/auth" component={asyncAuth} />
+          <Route path="/auth" render={() => <Auth />} />
           <Route path="/" exact component={BurgerBuilder} />
           <Redirect to='/' />
         </Switch>
@@ -49,15 +48,13 @@ class App extends React.Component {
     }
   };
 
-  render() {
-    return (
-      <div>
-        <Layout>
-          {this.routes()}
-        </Layout>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Layout>
+        <Suspense fallback={<p>Loading...</p>}>{routes()}</Suspense>
+      </Layout>
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => {
