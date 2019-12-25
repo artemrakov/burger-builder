@@ -8,28 +8,26 @@ const mapStateToProps = (state) => {
   return { ingredients: state.burgerBuilder.ingredients }
 }
 
-class Checkout extends React.Component {
-  checkoutCancelledHandler = () => {
-    this.props.history.goBack();
+const Checkout = props => {
+  const checkoutCancelledHandler = () => {
+    props.history.goBack();
   };
 
-  checkoutContinuedHandler = () => {
-    this.props.history.replace('/checkout/contact-data');
+  const checkoutContinuedHandler = () => {
+    props.history.replace('/checkout/contact-data');
   };
 
-  render() {
-    return (
-      <div>
-        <CheckoutSummary
-          checkoutCancelled={this.checkoutCancelledHandler}
-          checkoutContinued={this.checkoutContinuedHandler}
-          ingredients={this.props.ingredients} />
-        <Route
-          path={this.props.match.path + '/contact-data'}
-          component={ContactData} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <CheckoutSummary
+        checkoutCancelled={checkoutCancelledHandler}
+        checkoutContinued={checkoutContinuedHandler}
+        ingredients={props.ingredients} />
+      <Route
+        path={props.match.path + '/contact-data'}
+        component={ContactData} />
+    </div>
+  );
 }
 
 
