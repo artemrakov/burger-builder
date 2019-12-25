@@ -19,9 +19,11 @@ const Auth = React.lazy(() => {
 });
 
 const App = props => {
+  const { autoSignup } = props;
+
   useEffect(() => {
-    props.autoSignup();
-  }, [props]);
+    autoSignup();
+  }, [autoSignup]);
 
   const routes = () => {
     const { isAuth } = props;

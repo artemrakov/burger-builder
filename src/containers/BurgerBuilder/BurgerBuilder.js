@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../store/actions';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
@@ -12,19 +12,27 @@ import axios from '../../axios-orders.js';
 const BurgerBuilder = props => {
   const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
-  const { setIngredients } = props;
+  const ingredients = useSelector(state => state.burgerBuilder.ingredients);
+  const totalPrice = useSelector(state => state.burgerBuilder.totalPrice);
+  const isAuth = useSelector(state => state.auth.token !== null);
+
+  const dispatch = useDispatch();
+  const addIngredient = (data) => dispatch(actions.addIngredient(data));
+  const removeIngredient = (data) => dispatch(actions.removeIngredient(data));
+  const setIngredients = useCallback((data) => dispatch(actions.setIngredients(data)), [dispatch]);
+  const setAuthRedirect = (data) => dispatch(actions.authRedirect(data));
 
   useEffect(() => {
     setIngredients();
   }, [setIngredients])
 
   const purchaseHandler = () => {
-    if (props.isAuth) {
+    if (isAuth) {
       setPurchasing(true);
     } else {
-      props.setAuthRedirect({ path: '/checkout' });
+      setAuthRedirect({ path: '/checkout' });
       props.history.push('/auth');
     }
   }
@@ -44,30 +52,26 @@ const BurgerBuilder = props => {
 
   const addIngredientHandler = (type) => (e) => {
     e.preventDefault();
-    const { addIngredient } = props;
     addIngredient({ ingredient: type });
-    updatePurchaseState(props.ingredients);
+    updatePurchaseState(ingredients);
   }
 
   const removeIngredientHandler = (type) => (e) => {
     e.preventDefault();
-    if (props.ingredients[type] <= 0) {
+    if (ingredients[type] <= 0) {
       return;
     }
-    const { removeIngredient } = props;
     removeIngredient({ ingredient: type });
-    updatePurchaseState(props.ingredients);
+    updatePurchaseState(ingredients);
   }
 
   const orderSummary = () => {
-    const ingredients = props.ingredients;
-
     if (ingredients && !loading) {
       return <OrderSummary
         ingredients={ingredients}
         purchaseCancelled={purchaseCancelHandler}
         purchaseContinue={purchaseContinueHandler}
-        price={props.totalPrice} />
+        price={totalPrice} />
 
     } else {
       return <Spinner />
@@ -75,22 +79,20 @@ const BurgerBuilder = props => {
   }
 
   const burgerAndBuildControls = () => {
-    const ingredients = props.ingredients;
-
     if (ingredients) {
       const disabledInfo = Object.keys(ingredients)
         .reduce((acc, type) => ({ ...acc, [type]: ingredients[type] <= 0 }), {})
       return (
         <>
-          <Burger ingredients={props.ingredients} />
+          <Burger ingredients={ingredients} />
           <BuildControls
-            price={props.totalPrice}
+            price={totalPrice}
             disabled={disabledInfo}
             ingredientAdded={addIngredientHandler}
             ingredientRemoved={removeIngredientHandler}
             purchasable={purchasable}
             ordered={purchaseHandler}
-            isAuth={props.isAuth}
+            isAuth={isAuth}
           />
       </>
       );
@@ -109,19 +111,6 @@ const BurgerBuilder = props => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ingredients: state.burgerBuilder.ingredients,
-    totalPrice: state.burgerBuilder.totalPrice,
-    isAuth: state.auth.token !== null
-  }
-};
 
-const actionsCreators = {
-  addIngredient: actions.addIngredient,
-  removeIngredient: actions.removeIngredient,
-  setIngredients: actions.setIngredients,
-  setAuthRedirect: actions.authRedirect
-};
 
-export default connect(mapStateToProps, actionsCreators)(withErrorHandler(BurgerBuilder, axios));
+export default withErrorHandler(BurgerBuilder, axios);

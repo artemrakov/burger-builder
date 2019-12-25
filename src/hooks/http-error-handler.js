@@ -13,10 +13,10 @@ export default httpClient => {
 
   useEffect(() => {
     return () => {
-      axios.interceptors.request.eject(reqInterceptor);
-      axios.interceptors.response.eject(resInterceptor);
+      httpClient.interceptors.request.eject(reqInterceptor);
+      httpClient.interceptors.response.eject(resInterceptor);
     }
-  }, [reqInterceptor, resInterceptor]);
+  }, [reqInterceptor, resInterceptor, httpClient]);
 
 
   const errorConfirmedHandler = () => {
