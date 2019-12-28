@@ -59,7 +59,7 @@ const Auth = props => {
     const email = controls.email.value;
     const password = controls.password.value;
 
-    auth(email, password, isSignup);
+    auth({ email, password, isSignup });
   };
 
   const inputChangedHandler = (id) => (event) => {
