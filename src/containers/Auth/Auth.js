@@ -124,6 +124,7 @@ const mapActionsToProps = {
   setAuthRedirect: actions.authRedirect
 };
 
+
 const mapStateToProps = (state) => {
   return {
     request: state.auth.request,

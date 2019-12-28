@@ -4,11 +4,8 @@ import axios from 'axios';
 export const authRequest = createAction('AUTH_REQUEST');
 export const authSuccess = createAction('AUTH_SUCCESS');
 export const authFailed = createAction('AUTH_FAILED');
-export const authLogout = createAction('AUTH_LOGOUT', () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('expirationDate');
-  localStorage.removeItem('userId');
-});
+export const authInitiateLogout = createAction('AUTH_LOGOUT_INITIATE');
+export const authLogout = createAction('AUTH_LOGOUT');
 export const authRedirect = createAction('AUTH_REDIRECT');
 
 export const auth = (email, password, isSignup) => async (dispatch) => {
@@ -30,8 +27,7 @@ export const auth = (email, password, isSignup) => async (dispatch) => {
     dispatch(checkAuthTimeout(response.data.expiresIn));
   } catch (e) {
     dispatch(authFailed({ error: e.response.data.error }));
-  }
-};
+  } };
 
 export const checkAuthTimeout = (expirationTime) => (dispatch) => {
   setTimeout(() => {
