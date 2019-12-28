@@ -4,9 +4,9 @@ import axios from 'axios';
 export const authRequest = createAction('AUTH_REQUEST');
 export const authSuccess = createAction('AUTH_SUCCESS');
 export const authFailed = createAction('AUTH_FAILED');
-export const authInitiateLogout = createAction('AUTH_LOGOUT_INITIATE');
 export const authLogout = createAction('AUTH_LOGOUT');
 export const authRedirect = createAction('AUTH_REDIRECT');
+export const checkAuthTimeout = createAction('AUTH_CHECK_TIMEOUT');
 
 export const auth = (email, password, isSignup) => async (dispatch) => {
   dispatch(authRequest());
@@ -29,12 +29,6 @@ export const auth = (email, password, isSignup) => async (dispatch) => {
     dispatch(authFailed({ error: e.response.data.error }));
   } };
 
-export const checkAuthTimeout = (expirationTime) => (dispatch) => {
-  setTimeout(() => {
-    dispatch(authLogout());
-  }, expirationTime * 1000);
-};
-
 export const authCheckState = () => (dispatch) => {
   const token = localStorage.getItem('token');
   const expirationDate = new Date(localStorage.getItem('expirationDate'));
@@ -52,5 +46,5 @@ export const authCheckState = () => (dispatch) => {
 
   dispatch(authSuccess({ token, userId }));
   const milesecondsLeft = (expirationDate.getTime() - new Date().getTime()) / 1000;
-  dispatch(checkAuthTimeout(milesecondsLeft));
+  dispatch(checkAuthTimeout({ expirationTime: milesecondsLeft * 1000 }));
 };
