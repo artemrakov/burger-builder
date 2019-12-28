@@ -3,9 +3,9 @@ import axios from 'axios';
 import * as actions from '../actions';
 
 export function* authLogoutSaga(action) {
-  yield localStorage.removeItem('token');
-  yield localStorage.removeItem('expirationDate');
-  yield localStorage.removeItem('userId');
+  localStorage.removeItem('token');
+  localStorage.removeItem('expirationDate');
+  localStorage.removeItem('userId');
 };
 
 export function* checkAuthTimeoutSaga({ payload: { expirationTime }}) {
@@ -24,9 +24,9 @@ export function* authSaga({ payload: { email, password, isSignup }}) {
     const url = isSignup ? 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' : 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
     const response = yield axios.post(url + process.env.FIREBASE_API, authData);
     const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
-    yield localStorage.setItem('token', response.data.idToken);
-    yield localStorage.setItem('expirationDate', expirationDate);
-    yield localStorage.setItem('userId', response.data.localId);
+    localStorage.setItem('token', response.data.idToken);
+    localStorage.setItem('expirationDate', expirationDate);
+    localStorage.setItem('userId', response.data.localId);
     yield put(actions.authSuccess({ token: response.data.idToken, userId: response.data.localId }));
     yield put(actions.checkAuthTimeout({ expirationTime: response.data.expiresIn * 1000 }));
   } catch (e) {
@@ -35,9 +35,9 @@ export function* authSaga({ payload: { email, password, isSignup }}) {
 }
 
 export function* authCheckStateSaga() {
-  const token = yield localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const expirationDate = new Date(localStorage.getItem('expirationDate'));
-  const userId = yield localStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
 
   if (!token) {
     yield put(actions.authLogout());
